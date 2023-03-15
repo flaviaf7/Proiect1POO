@@ -48,7 +48,15 @@ class Angajat {
         Angajat& operator =(const Angajat&);
         friend istream & operator >>(istream & in, Angajat & obj);
         friend ostream & operator <<(ostream & out, const Angajat & obj);
-
+        char operator [] (int);
+        Angajat& operator ++();
+        Angajat operator ++(int);
+        Angajat operator +(const Angajat &);
+        Angajat operator +(int);
+        Angajat operator -(int);
+        operator float();
+        bool operator == (const Angajat &a);
+        bool operator > (const Angajat &a);
 
     //destructor
         ~Angajat();
@@ -91,10 +99,10 @@ Angajat::Angajat(char* nume, int LuniLucrate, float Salariu, int* CNP):id_angaja
 {
     this->nume = new char[strlen(nume)+1];
     strcpy(this->nume,nume);
-    this->salariu=salariu;
+    this->salariu=Salariu;
     this->LuniLucrate = LuniLucrate;
-    this->CNP = new int[13];
-    for (int i=0; i<13;i++){
+    this->CNP = new int[6];
+    for (int i=0; i<6;i++){
         this->CNP[i]=CNP[i];
     }
 }
@@ -106,8 +114,8 @@ Angajat::Angajat(const Angajat &obj):id_angajat(contorID++)
     strcpy(this->nume,obj.nume);
     this->salariu=obj.salariu;
     this->LuniLucrate=obj.LuniLucrate;
-    this->CNP = new int[13];
-    for (int i=0; i<13;i++){
+    this->CNP = new int[6];
+    for (int i=0; i<6;i++){
         this->CNP[i]=obj.CNP[i];
     }
 }
@@ -119,8 +127,8 @@ void Angajat::setCNP(int* CNP)
         delete [] this->CNP;
         this->CNP=NULL;
     }
-    this->CNP=new int[13];
-    for (int i=0;i<13;i++){
+    this->CNP=new int[6];
+    for (int i=0;i<6;i++){
         this->CNP[i]=CNP[i];
     }
 }
@@ -146,8 +154,8 @@ Angajat& Angajat::operator =(const Angajat &obj)
             this->CNP=NULL;
         }
 
-        this->CNP = new int[13];
-        for (int i=0; i<13;i++){
+        this->CNP = new int[6];
+        for (int i=0; i<6;i++){
             this->CNP[i]=obj.CNP[i];
         }
     }
@@ -173,8 +181,8 @@ istream & operator >>(istream & in, Angajat & obj)
     if (obj.CNP != NULL){
         delete [] obj.CNP;
     }
-    obj.CNP = new int[13];
-    for (int i=0; i<13;i++){
+    obj.CNP = new int[6];
+    for (int i=0; i<6;i++){
         in >> obj.CNP[i];
     }
     return in;
@@ -188,13 +196,74 @@ ostream & operator <<(ostream & out, const Angajat & obj)
     out<<"Salariu: "<<obj.salariu<<endl;
     out<<"Luni lucrate: "<<obj.LuniLucrate<<endl;
     out<<"CNP: ";
-    for(int i=0;i<13;i++){
+    for(int i=0;i<6;i++){
         out<<obj.CNP[i];
     }
     out<<endl;
     return out;
 }
 
+//supraincarcarea operatorului []
+char Angajat::operator [] (int a)
+{
+    if(this->nume == NULL)
+        throw runtime_error("Nume nu are caractere");
+    if(a<0 || a>strlen(this->nume))
+        throw runtime_error("Index invalid");
+    else
+        return this->nume[a];
+}
+
+//supraincarcarea operatorului ++ (Prima forma)
+Angajat& Angajat::operator ++()
+{
+    this->LuniLucrate++;
+    return *this;
+}
+
+//supraincarcarea operatorului ++ (A doua forma)
+Angajat Angajat::operator ++(int)
+{
+    Angajat aux(*this);
+    this->LuniLucrate++;
+    return aux;
+}
+
+//supraincarcarea operatorului +
+Angajat Angajat::operator +(const Angajat &)
+{
+    Angajat aux(*this);
+    aux.LuniLucrate = this->LuniLucrate+aux.LuniLucrate;
+    aux.salariu = this->salariu+aux.salariu;
+    return aux;
+}
+
+//supraincarcarea operatorului +
+Angajat Angajat::operator +(int a)
+{
+    Angajat aux(*this);
+    aux.LuniLucrate=this->LuniLucrate+a;
+    return aux;
+}
+
+//supraincarcarea operatorului -
+Angajat Angajat::operator -(int a)
+{
+    Angajat aux(*this);
+    aux.LuniLucrate=this->LuniLucrate-a;
+    return aux;
+}
+
+//supraincarcarea operatorului cast pt float
+Angajat::operator float(){return this->salariu;}
+
+//supraincarcarea operatorului ==
+bool Angajat::operator == (const Angajat &a){return strcmp(this->nume,a.nume)==0;}
+
+//supraincarcarea operatorului >
+bool Angajat::operator > (const Angajat &a){return strcmp(this->nume,a.nume)>0;}
+
+        
 //destructor
 Angajat::~Angajat()
 {
@@ -207,8 +276,6 @@ Angajat::~Angajat()
         this->CNP=NULL;
     }
 }
-
-// de supraincarcat [], ++, --, +,-, cast, <, ==
 
 
 class Ingredient {
@@ -251,7 +318,14 @@ class Ingredient {
         Ingredient & operator =(const Ingredient &obj);
         friend istream & operator >>(istream & in, Ingredient & obj);
         friend ostream & operator <<(ostream & out, const Ingredient & obj);
-
+        Ingredient& operator ++();
+        Ingredient operator ++(int);
+        Ingredient operator +(const Ingredient &);
+        Ingredient operator +(int);
+        Ingredient operator -(int);
+        operator string();
+        bool operator == (const Ingredient &I);
+        bool operator > (const Ingredient &I);
 
     //metode CRUD (CreateReadUpdateDelete)
         void AfisareIngredient();
@@ -357,6 +431,116 @@ ostream & operator <<(ostream & out, const Ingredient & obj)
     return out;
 }
 
+//supraincarcarea operatorului ++ (Prima forma)
+Ingredient& Ingredient::operator ++()
+{
+    this->Cantitate++;
+    if(this->Cantitate > 0)
+        this->OnStock=true;
+    return *this;
+}
+
+//supraincarcarea operatorului ++ (A doua forma)
+Ingredient Ingredient::operator ++(int)
+{
+    Ingredient aux(*this);
+    this->Cantitate++;
+    if(this->Cantitate > 0)
+        this->OnStock=true;
+    return aux;
+}
+
+//supraincarcarea operatorului +
+Ingredient Ingredient::operator +(const Ingredient &)
+{
+    Ingredient aux(*this);
+    aux.Cantitate = this->Cantitate+aux.Cantitate;
+    aux.OnStock = this->OnStock || aux.OnStock;
+    return aux;
+}
+
+//supraincarcarea operatorului +
+Ingredient Ingredient::operator +(int a)
+{
+    Ingredient aux(*this);
+    if (this->Cantitate+a >= 0)
+        aux.Cantitate=this->Cantitate+a;
+    else
+        aux.Cantitate=0;
+        this->OnStock=false;
+    if(this->Cantitate > 0)
+        this->OnStock=true;
+    return aux;
+}
+
+//supraincarcarea operatorului -
+Ingredient Ingredient::operator -(int a)
+{
+    Ingredient aux(*this);
+    if (this->Cantitate-a >= 0)
+        aux.Cantitate=this->Cantitate-a;
+    else
+        aux.Cantitate=0;
+        this->OnStock=false;
+    if(this->Cantitate > 0)
+        this->OnStock=true;
+    return aux;
+}
+
+//supraincarcarea operatorului cast pt string
+Ingredient::operator string(){return this->Nume;}
+
+//supraincarcarea operatorului ==
+bool Ingredient::operator == (const Ingredient &i){return this->Nume==i.Nume;}
+
+//supraincarcarea operatorului >
+bool Ingredient::operator > (const Ingredient &i){return this->Nume>i.Nume;}
+
+//functie afisare
+void Ingredient::AfisareIngredient()
+{
+    cout << this->Nume << " | ";
+    cout << this->Categorie << " | ";
+    cout << "Cantitate: " << this->Cantitate << " | ";
+    if (this->OnStock == false)
+        cout << "Nu este in stoc" << " | ";
+    else
+        cout << "Este in stoc" << " | ";
+    if (this->Organic == false)
+        cout << "Nu este organic" << endl;
+    else
+        cout << "Este organic" << endl;
+}
+
+//functie modificare
+void Ingredient::ModIngredient(){
+    string nume;
+    bool stoc = false;
+    int cnt;
+    bool org;
+    char cat;
+    cout << "Noul nume al ingredientului: ";
+    cin >> nume;
+    cout << "Noua categorie: ";
+    cin >> cat;
+    cout << "Noua cantitate: ";
+    cin >> cnt;
+    if (cnt > 0)
+        stoc = true;
+    cout << "Organic [0/1]: ";
+    cin >> org;
+    this->Nume=nume;
+    this->Cantitate=cnt;
+    this->OnStock=stoc;
+    this->Organic=org;
+    this->Categorie=cat;
+}
+
+//functie stergere
+void Ingredient::StergeIngredient(){
+    this->~Ingredient();
+}
+
 
 class Produs {
     private:
@@ -400,7 +584,15 @@ class Produs {
         Produs & operator =(const Produs &obj);
         friend istream & operator >>(istream & in, Produs & obj);
         friend ostream & operator <<(ostream & out, const Produs & obj);
-
+        Ingredient operator [] (int);
+        Produs& operator ++();
+        Produs operator ++(int);
+        Produs operator +(const Produs &);
+        Produs operator +(int);
+        Produs operator -(int);
+        operator bool();
+        bool operator == (const Produs &p);
+        bool operator > (const Produs &p);
 
     //destructor
         ~Produs();
@@ -575,6 +767,82 @@ ostream & operator <<(ostream & out, const Produs & obj)
     return out;
 }
 
+//supraincarcarea operatorului []
+Ingredient Produs::operator [] (int a)
+{
+    if(this->Ingrediente == NULL)
+        throw runtime_error("Produsul nu are ingrediente");
+    if(a<0 || a>this->NrIngrediente)
+        throw runtime_error("Index invalid");
+    else
+        return this->Ingrediente[a];
+}
+
+//supraincarcarea operatorului ++ (Prima forma)
+Produs& Produs::operator ++()
+{
+    this->Cantitate++;
+    if(this->Cantitate > 0)
+        this->OnStock=true;
+    return *this;
+}
+
+//supraincarcarea operatorului ++ (A doua forma)
+Produs Produs::operator ++(int)
+{
+    Produs aux(*this);
+    this->Cantitate++;
+    if(this->Cantitate > 0)
+        this->OnStock=true;
+    return aux;
+}
+
+//supraincarcarea operatorului +
+Produs Produs::operator +(const Produs &)
+{
+    Produs aux(*this);
+    aux.Cantitate = this->Cantitate+aux.Cantitate;
+    aux.OnStock = this->OnStock || aux.OnStock;
+    return aux;
+}
+
+//supraincarcarea operatorului +
+Produs Produs::operator +(int a)
+{
+    Produs aux(*this);
+    if (this->Cantitate+a >= 0)
+        aux.Cantitate=this->Cantitate+a;
+    else
+        aux.Cantitate=0;
+        this->OnStock=false;
+    if(this->Cantitate > 0)
+        this->OnStock=true;
+    return aux;
+}
+
+//supraincarcarea operatorului -
+Produs Produs::operator -(int a)
+{
+    Produs aux(*this);
+    if (this->Cantitate-a >= 0)
+        aux.Cantitate=this->Cantitate-a;
+    else
+        aux.Cantitate=0;
+        this->OnStock=false;
+    if(this->Cantitate > 0)
+        this->OnStock=true;
+    return aux;
+}
+
+//supraincarcarea operatorului cast pt bool
+Produs::operator bool(){return this->OnStock;}
+
+//supraincarcarea operatorului ==
+bool Produs::operator == (const Produs &p){return strcmp(this->NumeProdus,p.NumeProdus)==0;}
+
+//supraincarcarea operatorului >
+bool Produs::operator > (const Produs &p){return strcmp(this->NumeProdus,p.NumeProdus)>0;}
+
 //destructor
 Produs::~Produs(){
     if (this->NumeProdus != NULL){
@@ -595,13 +863,13 @@ class Client{
         string Nume;
         int NrProduse;
         Produs* Comanda;
-        string NrMasa;
+        int NrMasa;
 
     public:
 
     //constructori
         Client();
-        Client(string Nume, int NrProduse, Produs* Comanda, string NrMasa);
+        Client(string Nume, int NrProduse, Produs* Comanda, int NrMasa);
         Client(string Nume, int NrProduse, Produs* Comanda);
         Client(string Nume);
         Client(const Client &obj);
@@ -609,12 +877,12 @@ class Client{
 
     //setters
         void setNume(string Nume){this->Nume=Nume;}
-        void setMasa(string NrMasa){this->NrMasa=NrMasa;}
+        void setMasa(int NrMasa){this->NrMasa=NrMasa;}
 
 
     //getters
         string getNume(){return this->Nume;}
-        string getNrMasa(){return this->NrMasa;}
+        int getNrMasa(){return this->NrMasa;}
         int getNrProduse(){return this->NrProduse;}
         Produs* getComanda() const {return this->Comanda;};
 
@@ -623,7 +891,15 @@ class Client{
         Client& operator =(const Client&);
         friend istream & operator >>(istream & in, Client & obj);
         friend ostream & operator <<(ostream & out, const Client & obj);
-
+        Produs operator [] (int);
+        Client& operator ++();
+        Client operator ++(int);
+        Client operator +(const Client &);
+        Client operator +(int);
+        Client operator -(int);
+        operator int();
+        bool operator == (const Client &c);
+        bool operator > (const Client &c);
 
     //destructor
         ~Client();
@@ -633,9 +909,9 @@ class Client{
 //constructor fara parametrii
 Client::Client()
 {
-    Nume = 'Anonim';
+    Nume = "Anonim";
     NrProduse = 0;
-    NrMasa = "0";
+    NrMasa = 0;
     Comanda = NULL;
 }
 
@@ -645,7 +921,7 @@ Client::Client(string Nume)
     this->Nume = Nume;
     this->NrProduse= 0;
     this->Comanda = NULL;
-    this->NrMasa = "0";
+    this->NrMasa = 0;
 }
 
 //constructor cu 3 parametrii
@@ -657,11 +933,11 @@ Client::Client(string Nume, int NrProduse, Produs* Comanda)
     for (int i=0; i<this->NrProduse; i++){
         this->Comanda[i]=Comanda[i];
     }
-    this->NrMasa = "0";
+    this->NrMasa = 0;
 }
 
 //constructor cu toti parametrii
-Client::Client(string Nume, int NrProduse, Produs* Comanda, string NrMasa)
+Client::Client(string Nume, int NrProduse, Produs* Comanda, int NrMasa)
 {
     this->Nume = Nume;
     this->NrProduse= NrProduse;
@@ -738,6 +1014,71 @@ ostream & operator <<(ostream & out, const Client & obj)
     return out;
 }
 
+//supraincarcarea operatorului []
+Produs Client::operator [] (int a)
+{
+    if(this->Comanda == NULL)
+        throw runtime_error("Comanda nu are produse");
+    if(a<0 || a>this->NrProduse)
+        throw runtime_error("Index invalid");
+    else
+        return this->Comanda[a];
+}
+
+//supraincarcarea operatorului ++ (Prima forma)
+Client& Client::operator ++()
+{
+    this->NrMasa++;
+    return *this;
+}
+
+//supraincarcarea operatorului ++ (A doua forma)
+Client Client::operator ++(int)
+{
+    Client aux(*this);
+    this->NrMasa++;
+    return aux;
+}
+
+//supraincarcarea operatorului +
+Client Client::operator +(const Client &)
+{
+    Client aux(*this);
+    aux.Nume = this->Nume+" "+aux.Nume;
+    return aux;
+}
+
+//supraincarcarea operatorului +
+Client Client::operator +(int a)
+{
+    Client aux(*this);
+    if (this->NrMasa+a >= 0)
+        aux.NrMasa=this->NrMasa+a;
+    else
+        aux.NrMasa=0;
+    return aux;
+}
+
+//supraincarcarea operatorului -
+Client Client::operator -(int a)
+{
+    Client aux(*this);
+    if (this->NrMasa-a >= 0)
+        aux.NrMasa=this->NrMasa-a;
+    else
+        aux.NrMasa=0;
+    return aux;
+}
+
+//supraincarcarea operatorului cast pt int
+Client::operator int(){return this->NrMasa;}
+
+//supraincarcarea operatorului ==
+bool Client::operator == (const Client &c){return this->Nume==c.Nume;}
+
+//supraincarcarea operatorului >
+bool Client::operator > (const Client &c){return this->NrMasa>c.NrMasa;}
+
 //destructor
 Client::~Client(){
     if (this->Comanda != NULL){
@@ -748,19 +1089,5 @@ Client::~Client(){
 
 int main()
 {
-    Ingredient Zahar;
-    Ingredient Cafea("Cafea", 10);
-    Ingredient Lapte("Lapte Organic", 100, true);
-    //De intrebat!!!
-    //Lapte.StergeIngredient();
-
-    // Produs Espresso;
-    // Produs Cappuccino("Cappuccino");
-    // Produs M("Mocha", 15.0, 'A');
-    // Produs L("Latte", 16.0, 'B', true, 100);
-
-    Angajat A("Ionescu Ion", 12);
-    Angajat B("Popescu Pop", 24, 1000);
-
     return 0;
 }
